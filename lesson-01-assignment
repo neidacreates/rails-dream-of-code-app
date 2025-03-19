@@ -1,13 +1,13 @@
 # Question 1 Collect emails for students in the current Intro course
 
 # find out what the spring 2025 trimester id is = id: 5
-Trimester.find_by(year: '2025', term: 'Spring')
+trimester = Trimester.find_by(year: '2025', term: 'Spring')
 
 # find out what the intro coding class id is = id: 1
-CodingClass.find_by(title: "Intro to Programming")
+coding_class = CodingClass.find_by(title: "Intro to Programming")
 
-# find the id for the intro class in spring 2205 = id: 5
-Course.where(trimester_id: 5, coding_class_id: 1)
+# find the id for the intro class in spring 2025 = id: 5
+Course.where(trimester_id: trimester.id, coding_class_id: coding_class.id)
 
 # all student ids of students in spring 2025 intro programming
 #[41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
@@ -35,15 +35,6 @@ end
 #====================================
 
 # Question 2 Email all mentors who have not assigned a final grade
-
-# find out what the spring 2025 trimester id is = id: 5
-Trimester.find_by(year: '2025', term: 'Spring')
-
-# find out what the intro coding class id is = id: 1
-CodingClass.find_by(title: "Intro to Programming")
-
-# find the id for the intro class in spring 2205 = id: 5
-Course.where(trimester_id: 5, coding_class_id: 1)
 
 # find enrollment ids of students enrolled in that class and who have incomplete grades
 # [73, 76, 79]
