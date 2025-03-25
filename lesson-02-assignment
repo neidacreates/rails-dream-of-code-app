@@ -1,0 +1,181 @@
+# Question 1
+
+# find the Spring 2026 trimester
+spring2026 = Trimester.find_or_create_by(year: '2026', term: 'Spring')
+
+# find the list of coding class ids
+coding_class_list = CodingClass.all.pluck(:id)
+
+coding_class_list.each do |id|
+    Course.create(coding_class_id: id, trimester_id: spring2026.id, max_enrollment: 25)
+end
+# ==============
+# Question 2
+# Create a new student record and enroll the student in the Intro to Programming course for the Spring 2026 trimester.
+# Find a mentor with no more than 2 students (enrollments) assigned and assign that mentor to your new student's enrollment.
+
+# find what the intro class is for spring 2026 trimester 
+intro_class = CodingClass.find_by(title: 'Intro to Programming')
+
+intro_course = Course.find_by(trimester_id: spring2026.id, coding_class_id: intro_class.id)
+
+# create the new student
+new_student = Student.create!(first_name: "Jason", last_name: "Bourne", email: "jason@email.com")
+
+puts "Created Student: #{new_student.id} - #{new_student.email}"
+
+# enroll student in intro programming spring 2026
+new_enrollment = Enrollment.create!(course_id: intro_course.id, student_id: new_student.id)
+
+puts "Enrolled #{new_student.first_name} #{new_student.last_name} in Intro to Programming (Spring 2026)"
+
+# find mentor with 2 or less students
+
+available_mentor_ids = MentorEnrollmentAssignment
+.group(:mentor_id)
+.having("COUNT (enrollment_id) <= 2")
+.pluck(:mentor_id)
+
+puts "Eligible Mentors: #{available_mentor_ids}"
+
+# assign new student to a mentor
+chosen_mentor_id = available_mentor_ids.first
+new_mentor_enrollment = MentorEnrollmentAssignment.create!(mentor_id: chosen_mentor_id, enrollment_id: new_enrollment.id)
+
+puts "Assigned Mentor ID #{chosen_mentor_id} to Student ID #{new_student.id}'s enrollment."
+
+# ==============
+# Question 3
+My app idea is a music collection library where you can track which albums you own, need, and want to complete your collections for your favorite artists.
+
+# ==============
+# Question 4
+
+# Users
+# Who are the users of your application? Do you have different types of users or different roles?
+1. Collectors - The main user type who will be adding their collections to the app. It could be just hobby collectors, music enthusiasts, and music industry professionals who want to kep track of their music collections.
+
+
+# Core Features and User Scenarios
+# What are the core user scenarios or features of your app?
+A Collector user can add or delete an album to their collection and specify how many copies they own or which copy (for special editions with multiple physical copies).
+A Collector can organize thier album collection by artists, category, format, condition
+A Collector can mark albums are owned or wishlist
+A Collector can view album details like release date and tracklist for each album
+A Collector can sort through existing albums and filter as well as search
+
+
+# Consider sketching some wireframes for the main or more complex screens of your app.
+
+Login page = home screen, login
+Home dashboard = overview of collection stats, search, sample collection view and option to go to full view
+Full collection view = like instagram photo collage of album covers that are in your collection
+album details page = when you click on an album it takes you to the details page, can add to wishlist or collection or delete from here
+
+
+# ==========
+# Question 5 
+
+# Start by just listing out what you think the "nouns" or tables (or models) will be in your application. What are the things you talk about when you describe the application?
+
+User, Collection, Album, CollectionAlbum, Artist, Genre, WishList, WishListAlbum
+
+# Now think about the data each of these things will hold. Some of these may be attributes or columns, but be on the lookout for data that may be associations with other "nouns".
+
+User: id, email, password, name, created_at, updated_at. Associations: has_many Albums, has_many Collections, has_many WishLists
+
+Collection: id, name, user_id,created_at, updated_at. Associations: has_many Albums, belongs_to User
+
+Album: id, title, release_year, format, condition, cover_image, artist_id, genre_id, created_at, updated_at. Associations: belongs_to Artist, belongs_to Genre, has_many users, through Collections
+
+Artist: id, name, bio, created_at, updated_at. Associations: has_many Albums
+
+Genre: id, name, created_at, updated_at. Associations: has_many Albums
+
+WishList: id, user_id, name, created_at, updated_at. Associations: has_many Albums, belongs_to User
+
+# Create an ERD to visualize your tables and data. 
+
+User
+  - id (PK)
+  - email (string, unique)
+  - password_digest (string)
+  - name (string)
+  - created_at (datetime)
+  - updated_at (datetime)
+  has_many :collections
+  has_many :wishlists
+  has_many :albums, through: :collections
+
+Collection
+  - id (PK)
+  - name (string)
+  - user_id (FK)
+  - created_at (datetime)
+  - updated_at (datetime)
+  belongs_to :user
+  has_many :albums, through: :collection_albums
+
+CollectionAlbum  # Join table for Collections and Albums
+  - id (PK)
+  - collection_id (FK)
+  - album_id (FK)
+  - created_at (datetime)
+  - updated_at (datetime)
+  belongs_to :collection
+  belongs_to :album
+
+Album
+  - id (PK)
+  - title (string)
+  - release_year (integer)
+  - format (string)  # Vinyl, CD, Digital, etc.
+  - condition (string)  # New, Used, etc.
+  - cover_image (string)  # URL for cover image
+  - artist_id (FK)
+  - genre_id (FK)
+  - created_at (datetime)
+  - updated_at (datetime)
+  belongs_to :artist
+  belongs_to :genre
+  has_many :collections, through: :collection_albums
+
+Artist
+  - id (PK)
+  - name (string)
+  - bio (text)
+  - created_at (datetime)
+  - updated_at (datetime)
+  has_many :albums
+
+Genre
+  - id (PK)
+  - name (string)
+  - created_at (datetime)
+  - updated_at (datetime)
+  has_many :albums
+
+WishList
+  - id (PK)
+  - user_id (FK)
+  - name (string)
+  - created_at (datetime)
+  - updated_at (datetime)
+  belongs_to :user
+  has_many :albums, through: :wishlist_albums
+
+WishListAlbum  # Join table for WishLists and Albums
+  - id (PK)
+  - wishlist_id (FK)
+  - album_id (FK)
+  - created_at (datetime)
+  - updated_at (datetime)
+  belongs_to :wishlist
+  belongs_to :album
+
+
+
+
+
+
+
