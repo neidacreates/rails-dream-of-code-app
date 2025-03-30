@@ -1,0 +1,54 @@
+# Question 1 Collect emails for students in the current Intro course
+
+# find out what the spring 2025 trimester id is = id: 5
+trimester = Trimester.find_by(year: '2025', term: 'Spring')
+
+# find out what the intro coding class id is = id: 1
+coding_class = CodingClass.find_by(title: "Intro to Programming")
+
+# find the id for the intro class in spring 2025 = id: 5
+Course.where(trimester_id: trimester.id, coding_class_id: coding_class.id)
+
+# all student ids of students in spring 2025 intro programming
+#[41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+student_ids = Enrollment.where(course_id: 5).pluck(:student_id)
+
+# find the students with the ids gathered in the last step
+students = Student.where(id: student_ids) 
+
+# for each student in the intro class spring 2025, print their id and email
+students.each do |student|
+    puts "#{student.id}, #{student.email}"
+end
+
+# 41, sheri_lakin@torp-larson.test
+# 42, deshawn@gleichner.test
+# 43, alayna.okeefe@schoen.example
+# 44, loyd@robel.example
+# 45, norman@windler.test
+# 46, blanch.yost@lynch-howell.example
+# 47, maddie@gulgowski.test
+# 48, elmer.beier@schmidt-rowe.example
+# 49, emmitt_rippin@terry.test
+# 50, kai_torp@hessel-marks.example
+
+#====================================
+
+# Question 2 Email all mentors who have not assigned a final grade
+
+# find enrollment ids of students enrolled in that class and who have incomplete grades
+# [73, 76, 79]
+enrollment_ids = Enrollment.where(course_id: 5, final_grade: nil).pluck(:id)
+
+# get list of mentor ids for mentors who need to put grades in
+mentor_ids = MentorEnrollmentAssignment.where(enrollment_id: enrollment_ids).pluck(:mentor_id)
+
+# get emails for mentors
+mentors = Mentor.where(id: mentor_ids)
+mentors.each do |mentor|
+    puts "#{mentor.id}, #{mentor.email}"
+end
+
+# 25, jaqueline@dickens.example
+# 26, nestor@kuhic-stehr.test
+# 27, mitch_parker@goldner.test
