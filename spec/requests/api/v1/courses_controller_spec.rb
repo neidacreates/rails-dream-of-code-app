@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::Courses", type: :request, skip: true do
+RSpec.describe "Api::V1::Courses", type: :request do
   # Set up current, past and future trimesters and courses for each
   let!(:current_trimester) {
     Trimester.create!(
@@ -55,6 +55,18 @@ RSpec.describe "Api::V1::Courses", type: :request, skip: true do
       expect(JSON.parse(response.body)['courses']).to be_an(Array)
       expect(JSON.parse(response.body)['courses'].size).to eq(1)
       expect(JSON.parse(response.body)['courses'].first['id']).to eq(current_course.id)
+    end
+  end
+  describe "GET /courses/:id" do
+    it "shows the course name and enrolled students" do
+      course = Course.create!(coding_class: coding_class, trimester: current_trimester, max_enrollment: 20)
+      student = Student.create!(first_name: "John", last_name: "Doe", email: "john@example.com")
+      Enrollment.create!(student: student, course: course)
+
+      get course_path(course)
+
+      expect(response.body).to include(course.title)
+      expect(response.body).to include("John Doe")
     end
   end
 end
