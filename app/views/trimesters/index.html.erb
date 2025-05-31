@@ -1,0 +1,11 @@
+<h1>Trimesters</h1>
+
+<ul id="trimesters">
+    <% @trimesters.each do |trimester| %>
+        <li>
+            <a href="/trimesters/<%= trimester.id %>">
+                <%= "#{trimester.term} #{trimester.year}" %>
+            </a>
+        </li>
+    <% end %>
+</ul>
