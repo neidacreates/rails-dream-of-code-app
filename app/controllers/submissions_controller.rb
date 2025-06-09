@@ -3,8 +3,8 @@ class SubmissionsController < ApplicationController
   def new
     @course = Course.find(params[:course_id])
     @submission = Submission.new
-    @enrollments # TODO: What set of enrollments should be listed in the dropdown?
-    @lessons # TODO: What set of lessons should be listed in the dropdown?
+    @enrollments = @course.enrollments # TODO: What set of enrollments should be listed in the dropdown?
+    @lessons = @course.lessons # TODO: What set of lessons should be listed in the dropdown?
   end
 
   def create
@@ -14,8 +14,8 @@ class SubmissionsController < ApplicationController
     if @submission.save
       redirect_to course_path(@course), notice: 'Submission was successfully created.'
     else
-      @enrollments # TODO: Set this up just as in the new action
-      @lessons # TODO: Set this up just as in the new action
+      @enrollments = @course.enrollments# TODO: Set this up just as in the new action
+      @lessons =@course.lessons# TODO: Set this up just as in the new action
       render :new
     end
   end
