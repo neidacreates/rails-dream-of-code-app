@@ -1,0 +1,23 @@
+<h1>Edit Trimester</h1>
+
+<%= form_with(model: @trimester, local: true) do |form| %>
+    <% if @trimester.errors.any? %>
+        <div style="color: red">
+            <h2><%= pluralize(@trimester.errors.count, "error") %> prohibited this trimester from being saved:</h2>
+            <ul>
+                <% @trimester.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                <% end %>
+            </ul>
+        </div>
+<% end %>
+
+<div class="form-group">
+    <%= form.label :application_deadline %>
+    <%= form.date_field :application_deadline, class: 'form-control' %>
+</div>
+
+<div class="form-group">
+    <%= form.submit 'Update Trimester', class: 'btn btn-primary' %>
+</div>
+<% end %>
